@@ -9,7 +9,7 @@ const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
-app.use(express.json()); // Needed to read req.body
+app.use(express.json());
 
 // MongoDB connection
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster-1.dymuola.mongodb.net/?appName=Cluster-1`;
@@ -24,7 +24,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
     console.log("Connected to MongoDB");
 
     const db = client.db("techtrove_db");
