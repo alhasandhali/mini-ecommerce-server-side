@@ -194,7 +194,7 @@ async function run() {
       }
     });
 
-    // Update product
+    // Update product (allowed fields only)
     app.patch("/product/:id", async (req, res) => {
       try {
         const id = req.params.id;
@@ -203,18 +203,32 @@ async function run() {
           return res.status(400).send({ error: "Invalid product ID" });
         }
 
-        const updateData = req.body;
+        const body = req.body;
 
-        // Convert released_date to a JS Date object if it exists
-        if (updateData.released_date) {
-          updateData.released_date = new Date(updateData.released_date);
-        }
+        // Allowed fields for update
+        const allowedFields = [
+          "title",
+          "description",
+          "price",
+          "discount_price",
+          "stock",
+          "warranty",
+        ];
 
-        console.log("FINAL UPDATE DATA:", updateData);
+        const filteredUpdate = {};
+
+        // Pick only allowed fields
+        allowedFields.forEach((field) => {
+          if (body[field] !== undefined) {
+            filteredUpdate[field] = body[field];
+          }
+        });
+
+        console.log("FINAL UPDATE DATA:", filteredUpdate);
 
         const result = await productCollection.updateOne(
           { _id: new ObjectId(id) },
-          { $set: updateData }
+          { $set: filteredUpdate }
         );
 
         res.send(result);
